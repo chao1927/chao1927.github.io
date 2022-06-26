@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counter1
+spec:
+  ## 在 Pod 定义一个 volume 用于容器共享
+  volumes:
+  - name: count-log
+    hostPath:
+      path: /tmp/log/counter
+  ## 定义两个测试的容器, 使用 busybox
+  containers:
+  - name: count
+    image: busybox
+    command:
+    - /bin/sh
+    - -c
+    - >
+      i=0;
+      while true;
+      do
+        echo "$i: $(date)" >> /var/log/1.log;
+        i=$((i+1));
+        sleep 1;
+      done
+    volumeMounts:
+      - name: count-log
+        mountPath: /var/log
+  - name: tail-log
+    image: busybox
+    command: 
+    - /bin/sh
+    - -c
+    - mkdir -p /var/log; touch /var/log/1.log; tail -n+1 -f /var/log/1.log
+    volumeMounts:
+      - name: count-log
+        mountPath: /var/log

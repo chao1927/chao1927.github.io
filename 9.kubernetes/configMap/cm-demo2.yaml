@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-demo2
+  namespace: default
+data:
+  demo2.key1: demo2-value1
+  demo2.key2: demo2-value2
+  demo2.config1: |
+    p1=demo2-v1
+    p2=demo2-v2

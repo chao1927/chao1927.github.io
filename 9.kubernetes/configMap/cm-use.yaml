@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cm-use
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cm-test
+  template:
+    metadata:
+      labels:
+        app: cm-test
+    spec:
+      containers:
+      - name: cm-test
+        image: busybox
+        command: [ "/bin/sh", "-c", "env; ls /etc/config" ]
+        env:
+        - name: KEY1
+          valueFrom:
+            configMapKeyRef:
+              name: cm-demo
+              key: key1
+        - name: KEY2
+          valueFrom:
+            configMapKeyRef:
+              name: cm-demo
+              key: key2
+        envFrom:
+          - configMapRef:
+              name: cm-demo2
+        volumeMounts:
+        - name: cm-demo2
+          mountPath: /etc/config
+      volumes:
+      - name: cm-demo2
+        configMap:
+          name: cm-demo2

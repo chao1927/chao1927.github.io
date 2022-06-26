@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: prestop-hook
+spec:
+  volumes:
+  - name: workdir
+    hostPath:
+      path: /tmp
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: workdir
+      mountPath: /usr/share/
+    lifecycle:
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "echo 'hello preStop nginx' > /usr/share/preStop"]

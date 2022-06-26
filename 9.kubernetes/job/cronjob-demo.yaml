@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-demo
+  namespace: default
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 20
+      backoffLimit: 10
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: counter
+            image: busybox
+            command:
+            - "bin/sh"
+            - "-c"
+            - "for i in 9 8 7 6 5 4 3 2 1; do echo $i; done; sleep 40"

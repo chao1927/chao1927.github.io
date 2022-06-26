@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-demo1
+  namespace: default
+spec:
+  serviceName: nginx
+  replicas: 3
+  podManagementPolicy: Parallel
+  updateStrategy: 
+    rollingUpdate:
+      partition: 1
+  selector:
+    matchLabels:
+      app: sts-nginx
+  template:
+    metadata:
+      labels:
+        app: sts-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
